@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://yuyan-sec.github.io</id>
+    <title>我不会挖洞</title>
+    <updated>2021-06-04T11:34:17.104Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://yuyan-sec.github.io"/>
+    <link rel="self" href="https://yuyan-sec.github.io/atom.xml"/>
+    <subtitle>&lt;h3&gt;猪肉佬&lt;/h3&gt;&lt;br&gt;何尝不想成为一位伟大的白帽子</subtitle>
+    <logo>https://yuyan-sec.github.io/images/avatar.png</logo>
+    <icon>https://yuyan-sec.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, 我不会挖洞</rights>
+    <entry>
+        <title type="html"><![CDATA[信息收集]]></title>
+        <id>https://yuyan-sec.github.io/post/001/</id>
+        <link href="https://yuyan-sec.github.io/post/001/">
+        </link>
+        <updated>2021-06-04T11:28:07.000Z</updated>
+    </entry>
+</feed>
