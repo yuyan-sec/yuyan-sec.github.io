@@ -10,7 +10,8 @@ private byte[] GetPostData() { HttpRequest request = HttpContext.Current.Request
 重庆洪崖洞
 泰安泰山
 济南大明湖
-杭州西湖</description></item><item><title>About</title><link>https://yuyan-sec.github.io/about/</link><pubDate>Sat, 22 Apr 2023 18:06:20 +0800</pubDate><guid>https://yuyan-sec.github.io/about/</guid><description>@yuyan-sec 一个普普通通的脚本小子！</description></item><item><title>Go代码审计-Go-bbs</title><link>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</link><pubDate>Sun, 26 Feb 2023 17:38:58 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</guid><description>成功获取到垃圾的CVE编号：cve-2023-27755
+杭州西湖</description></item><item><title>About</title><link>https://yuyan-sec.github.io/about/</link><pubDate>Sat, 22 Apr 2023 18:06:20 +0800</pubDate><guid>https://yuyan-sec.github.io/about/</guid><description>@yuyan-sec
+一个普普通通的脚本小子！</description></item><item><title>Go代码审计-Go-bbs</title><link>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</link><pubDate>Sun, 26 Feb 2023 17:38:58 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</guid><description>成功获取到垃圾的CVE编号：cve-2023-27755
 安装 下载：git clone https://github.com/gobbscom/go-bbs.git 创建目录: cd go-bbs &amp;amp;&amp;amp; mkdir conf 复制配置文件：cp app.conf.example conf/app.conf 修改数据库配置 执行./go-bbs --install 安装数据库, 最后执行 ./go-bbs 访问对应端口即可 审计 查看路由API routers/router.go 196行
 跟进 &amp;amp;home.SingleController{} Download 方法，该接口需要登录，通过全局搜索 Customer 默认会添加一个用户
 UserName: User PassWord: 123456 查看 router.go ,跟进 &amp;amp;home.LoginController{}，传入 username 和 password 进行登录
