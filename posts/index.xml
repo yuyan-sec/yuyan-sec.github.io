@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on yuyan-sec</title><link>https://yuyan-sec.github.io/posts/</link><description>Recent content in Posts on yuyan-sec</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 18 Mar 2024 22:16:09 +0800</lastBuildDate><atom:link href="https://yuyan-sec.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>明源云接口管家任意文件上传</title><link>https://yuyan-sec.github.io/posts/%E6%98%8E%E6%BA%90%E4%BA%91%E6%8E%A5%E5%8F%A3%E7%AE%A1%E5%AE%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/</link><pubDate>Mon, 18 Mar 2024 22:16:09 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E6%98%8E%E6%BA%90%E4%BA%91%E6%8E%A5%E5%8F%A3%E7%AE%A1%E5%AE%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/</guid><description>审计过程 找到相关文件所在位置再找对应的 Class 获取 apiocode 参数做为zip文件名 获取 post 数据 应用程序的根目录下面创建 Assembly 目录。context.Request.PhysicalApplicationPath 将返回应用程序的根目录在服务器文件系统中的物理路径。 在 Assembly 目录下创建一个 apiocode参数.zip 文件，存在相同名字的zip就会先删除文件和目录再创建 zip 进入 Unzip.Decode GetPostData 方法
+private byte[] GetPostData() { HttpRequest request = HttpContext.Current.Request; byte[] array = new byte[request.InputStream.Length]; request.InputStream.Read(array, 0, array.Length); return array; } Unzip
+读取传入的 zip 文件 获取目录的路径：path.Substring(0, path.LastIndexOf(&amp;quot;.&amp;quot;)) 的作用是从文件路径中提取文件名，去掉文件的扩展名。Assembly/1.zip =&amp;gt; Assembly/1 解压文件：zipEntry.Name 是用于获取一个压缩文件中条目（entry）的名称。Assembly/1/xxx.aspx 最终访问到的文件路径：http://127.0.0./myunke/Assembly/1/xxx.aspx 网上的Exp 都是跳三层目录，有可能是上传目录做了禁止解析的操作。</description></item><item><title>Go代码审计-Go-bbs</title><link>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</link><pubDate>Sun, 26 Feb 2023 17:38:58 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-go-bbs/</guid><description>成功获取到垃圾的CVE编号：cve-2023-27755
+安装 下载：git clone https://github.com/gobbscom/go-bbs.git 创建目录: cd go-bbs &amp;amp;&amp;amp; mkdir conf 复制配置文件：cp app.conf.example conf/app.conf 修改数据库配置 执行./go-bbs --install 安装数据库, 最后执行 ./go-bbs 访问对应端口即可 审计 查看路由API routers/router.go 196行
+跟进 &amp;amp;home.SingleController{} Download 方法，该接口需要登录，通过全局搜索 Customer 默认会添加一个用户
+UserName: User PassWord: 123456 查看 router.go ,跟进 &amp;amp;home.LoginController{}，传入 username 和 password 进行登录
+beego.Router(&amp;#34;/login.html&amp;#34;, &amp;amp;home.LoginController{}, &amp;#34;Post:Login&amp;#34;) POST /login.html HTTP/1.1 Host: 192.168.19.6:9090 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36 Connection: close Content-Type: application/x-www-form-urlencoded Content-Length: 29 username=user&amp;amp;password=123456 获取到凭证：beegosessionID=***</description></item><item><title>任意文件下载绕过到getshell</title><link>https://yuyan-sec.github.io/posts/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E7%BB%95%E8%BF%87%E5%88%B0getshell/</link><pubDate>Sun, 26 Feb 2023 17:32:19 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E7%BB%95%E8%BF%87%E5%88%B0getshell/</guid><description>前言 打开网站发现可以下载帮助文档，通过帮助文档知道用户名规则和默认的密码是：111 通过弱口令登录一个普通用户，发现下载文件是直接拼接绝对路径的。 任意文件下载绕过 随意传一个路径导致接口报错知道了网站的绝对路径
+测试发现可以下载 web.config ，但是 aspx, ashx, cs, dll 之类的后缀名下载不了
+突然想起在文件后缀名加一个 . 在 windows 好像可以解析，成功读取到源码。
+#region 读取文件拓展名过滤 string downExtendName = Path.GetExtension(code).ToLower().Trim(); string[] notDownExtendNameArr = { &amp;#34;.aspx&amp;#34;, &amp;#34;.cshtml&amp;#34;, &amp;#34;.css&amp;#34;, &amp;#34;.js&amp;#34;, &amp;#34;.bat&amp;#34;, &amp;#34;.dll&amp;#34;, &amp;#34;.ashx&amp;#34;, &amp;#34;.ascx&amp;#34;, &amp;#34;.eri&amp;#34;, &amp;#34;.xml&amp;#34;, &amp;#34;.asp&amp;#34;, &amp;#34;.cs&amp;#34; }; foreach (string item in notDownExtendNameArr) { if (downExtendName.Contains(item)) { context.Response.Write(&amp;#34;&amp;lt;script&amp;gt;alert(&amp;#39;您下载的文件不被系统认可，请重新选择&amp;#39;);&amp;lt;/script&amp;gt;&amp;#34;); return; } } 任意文件上传 上传的接口需要登录，可以传入一个 SaveName ，像任意文件下载做了文件后缀名的过滤，可以利用上面的方式进行绕过 1.aspx.
+利用方式：
+方式一： 传入 SaveName 的情况：fileName 不等于空就不会进入if (string.IsNullOrEmpty(fileName)) 判断
+string sub_path = Share.</description></item><item><title>Go代码审计-Zdir</title><link>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-zdir/</link><pubDate>Sun, 26 Feb 2023 17:23:03 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-zdir/</guid><description>成功获取到垃圾的CVE编号：cve-2023-23314
+安装 zdir 版本: 3.2.0
+git clone https://github.com/helloxz/zdir go run main.go init 在 data/config/config.ini 设置 public_path
+public_path=data/public 启动
+go run main.go start 审计流程 查看路由，发现创建目录和上传都需要登录
+跟进 controller.Mkdir 方法，post 请求提交的参数是 name 和 path
+跟进 !V_dir 方法，发现只是判断传的路径是否为文件夹这样就可以利用目录穿越创建一个 .ssh 目录
+POST /api/dir/create HTTP/1.1 Host: 127.0.0.1:6080 Content-Length: 28 sec-ch-ua: &amp;#34; Not A;Brand&amp;#34;;v=&amp;#34;99&amp;#34;, &amp;#34;Chromium&amp;#34;;v=&amp;#34;96&amp;#34; X-Token: 433a01baeaa6c37ef46f21621cc06f95 sec-ch-ua-mobile: ?0 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36 Content-Type: application/x-www-form-urlencoded;charset=UTF-8 Accept: application/json, text/plain, */* X-Cid: bPlNFG sec-ch-ua-platform: &amp;#34;Linux&amp;#34; Origin: http://127.</description></item><item><title>Go代码审计-Sonic</title><link>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-sonic/</link><pubDate>Sun, 26 Feb 2023 17:21:00 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/go%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-sonic/</guid><description>成功获取到垃圾的CVE编号：cve-2022-46959
+前言 在 V2EX 看到帖子知道是 go 开发的博客系统，在B站看过几集视频的我粗略看了下代码好像有漏洞，尝试申请一个 CVE 看一看。
+审计 源码：https://github.com/go-sonic/sonic 版本 1.0.4
+直接执行 go run main.go 运行程序，然后进行安装。
+在 handler/route.go 查看一下路由，发现备份功能的代码在 75 行
+backupRouter := authRouter.Group(&amp;#34;/backups&amp;#34;) backupRouter.POST(&amp;#34;/work-dir&amp;#34;, s.wrapHandler(s.BackupHandler.BackupWholeSite)) 搜索 BackupWholeSite 方法，在 service/impl/backup.go 发现相关代码。
+BackupWholeSite 方法传入一个数组名为：toBackupItems 66行 遍历 toBackupItems 然后拼接路径 toBackupPath := filepath.Join(b.Config.Sonic.WorkDir, toBackupItem) 因为是直接拼接可以使用 ../ 进行跨目录备份 toBackupItem == ../../../../home/kali/Documents b.Config.Sonic.WorkDir == /home/kali/Desktop/sonic toBackupPath	==	/home/kali/Desktop/sonic/../../../../home/kali/Documents toBackupPath	== /home/kali/Documents 把 toBackupPath 添加到 toBackupPaths ， 70行 把 toBackupPaths 传入到 ZipFile 方法 func (b *backupServiceImpl) BackupWholeSite(ctx context.</description></item><item><title>网站备份到getshell</title><link>https://yuyan-sec.github.io/posts/%E7%BD%91%E7%AB%99%E5%A4%87%E4%BB%BD%E5%88%B0getshell/</link><pubDate>Sun, 26 Feb 2023 17:18:14 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E7%BD%91%E7%AB%99%E5%A4%87%E4%BB%BD%E5%88%B0getshell/</guid><description>网站备份 发现网站是 .net 的站，爆破弱口令也不成功。简单手工测试一下，发现二级目录存在一个网站备份：
+/aaaaa/login
+/aaaaa.zip
+/aaaaa.rar
+/aaaaa/bin.rar 发现存在 bin.rar
+/aaaaa/bin.zip
+代码审计 因为不懂审计，直接把所有 Bin 目录下的 dll 文件丢到 dnspy 里面。通过登录的接口直接搜索代码在哪
+登录的接口：/aaaaa/Account/Login 在 Web.Controllers 下 AccountController 类 Login 方法，大概知道是怎么请求的了
+在 HelperController 类中发现 Upload 方法：下面是我猜的审计流程
+判断 fileData 是否为空 判断 Uploads 目录是否存在，不存在就创建 获取后缀名拼接在 NewId 最后保存文件 根据上面 Login 的接口规则 构造上传的接口，成功 getshell</description></item><item><title>钓鱼网站源码审计</title><link>https://yuyan-sec.github.io/posts/%E9%92%93%E9%B1%BC%E7%BD%91%E7%AB%99%E6%BA%90%E7%A0%81%E5%AE%A1%E8%AE%A1/</link><pubDate>Sun, 26 Feb 2023 17:15:19 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E9%92%93%E9%B1%BC%E7%BD%91%E7%AB%99%E6%BA%90%E7%A0%81%E5%AE%A1%E8%AE%A1/</guid><description>前言 在 t00ls 看见发了个钓鱼网站的源码，简单在本地搭建起来，用我在B站看过几集PHP视频的实力来一场说审就审的 “伪” 代码审计之旅，不是很懂写得不好请见谅。
+搭建起来长这个样子
+前台 SQL注入 看一下login.php的代码，发现把数据传入的数据库没有任何处理，直接拼接到SQL语句中
+跟进 fetch0ne 函数
+复现，（找不到后台的时候打个XSS说不定有惊喜）
+ajax.php第69行
+整个站都是注入，啊这…..
+后台漏洞 后台上传文件的文件名都被写死了，删除操作直接sql拼接，就不看了。
+备份位置导致的SQL注入 首先是判断是否登录，然后 btnSubmit 和 arrTables 不能为空，然后循环 arrTables ，把 $table 拼接到SQL语句
+后台显示的功能没有相关的前端页面，可以直接访问相关的URL
+一开始看代码尝试自己构造的时候发现每次循环取的是第一个字符
+然后就想到了数组就可以取出表名，表名使用了 ` 反引号，所以构造payload如下
+数据恢复导致getshell （假的） 包含解压功能的php位置没写对，自己手工改了一下
+大概的流程：当 action=import 进入流程，file参数指定文件名（参数没做任何过滤，导致可以跳目录），正则匹配 .zip 后缀，如果不是 .zip 就不进入解压缩的循环。把 $filename 赋值给 $oriFilename，把 $filename 改成 .sql 后缀 ，然后对 $oriFilename 进行解压缩
+if ((&amp;#39;import&amp;#39; == $_GET[&amp;#39;action&amp;#39;]) &amp;amp;&amp;amp; (!empty($_GET[&amp;#39;file&amp;#39;]))) { $filename = $_GET[&amp;#39;file&amp;#39;]; $oriFilename = &amp;#39;&amp;#39;; if (eregi(&amp;#39;.zip$&amp;#39;, $filename)) { //解压缩 $oriFilename = $filename; $filename = eregi_replace(&amp;#39;.</description></item><item><title>Druid未授权到Getshell</title><link>https://yuyan-sec.github.io/posts/druid%E6%9C%AA%E6%8E%88%E6%9D%83%E5%88%B0getshell/</link><pubDate>Sun, 26 Feb 2023 17:13:02 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/druid%E6%9C%AA%E6%8E%88%E6%9D%83%E5%88%B0getshell/</guid><description>前言 网站有注册，但是需要邀请码。尝试爆破弱口令，发现需要插入 KEY 才能登录。通过扫目录发现 druid 未授权访问，通过 URL 监控发现文件上传的接口，但是需要登录。通过爆破 Session 发现可用的Session。直接上传 jsp jspx 提示非法，随意输入 1.xxx 发现可以上传，说明是 任意文件上传 只是对 jsp 做了黑名单处理，然后通过 Windwos 特性成功绕过得到 Webshell。
+经过 通过目录扫描发现 Druid
+通过访问 URI 监控发现文件上传接口
+发现存在 Session，利用工具把 Session 保存下来
+https://github.com/yuyan-sec/druid_sessions
+找个需要登录的链接爆破 Session，这是失效的 session
+这是可以利用的 session
+文件上传需要登录，所以需要上面的 session。
+尝试上传 jsp 提示非法
+随意输入一些后缀名，发现可以成功上传，说明是任意文件上传
+通过 windows 特性 1.jsp::$DATA成功上传 webshell。</description></item><item><title>记一次getshell过程</title><link>https://yuyan-sec.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1getshell%E8%BF%87%E7%A8%8B/</link><pubDate>Sun, 26 Feb 2023 17:10:05 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1getshell%E8%BF%87%E7%A8%8B/</guid><description>首发先知：https://xz.aliyun.com/t/9412
+前言 兜兜转转最终拿到了 shell ，但是发现大佬已经在前一个小时 getshell 了，记录一下我是怎么发现的过程，也做一下自我反思。
+过程 打开网站查看源代码，发现成功登录后会跳转到 f0.html 文件
+没登录直接访问会跳转，也就不用说了。直接在 Repater 查看 html ，得到一个JS文件
+查看common.js 得到 4 个html
+f0.html f1.html f2.html f3.html 分别查看4个 html ，最终在 f3.html 得到 list.html
+通过 list.html 得到 cl.js ，查看 JS 文件发现了文件上传的接口
+构造上传数据包成功拿到 Webshell
+连接上 Webshell 发现已经有师傅在 0 点已经 getshell 了
+另外一个接口也能上传 Webshell
+发现也已经被拿下了
+反思 1、个人能力太弱（硬伤）
+2、资产探测能力太弱（先探测存活，然后批量扫描目录，快速探测可能存在脆弱的资产）
+3、字典太弱（这文件上传接口应该能直接被探测到，奈何自己的字典太弱）
+总结 通过不同页面加载的 JS 找到文件上传接口，构造请求成功上传 Webshell 。</description></item><item><title>一次有意思的弱口令发现过程</title><link>https://yuyan-sec.github.io/posts/%E4%B8%80%E6%AC%A1%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E5%BC%B1%E5%8F%A3%E4%BB%A4%E5%8F%91%E7%8E%B0%E8%BF%87%E7%A8%8B/</link><pubDate>Sun, 26 Feb 2023 16:57:57 +0800</pubDate><guid>https://yuyan-sec.github.io/posts/%E4%B8%80%E6%AC%A1%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E5%BC%B1%E5%8F%A3%E4%BB%A4%E5%8F%91%E7%8E%B0%E8%BF%87%E7%A8%8B/</guid><description>前言 某天表哥给了一个 授权 的站，上面已经被挂了博彩信息，看样子是废弃站了。然后我就开始一波辣鸡的操作。
+信息收集 一开始只知道CMS是 MetInfo，具体版本不明。乱打一波历史漏洞后，一无所获。然后表哥发现了CMS的版本
+先后我发现了目录泄露
+通过谷歌在搜索历史漏洞的时候发现了 phpinfo 文件
+查看 robots.txt
+通过 robots.txt 在 cache 目录发现 黑阔 留下的 webshell，2w个shell密码都不中。不愧是黑阔的webshell，真强！！！
+表哥发来了后台地址，dirsearch 可以扫出，只是当时没想这么多，就去打了一波历史漏洞。
+后台忘记用户处存在用户名枚举，使用表哥的字典，结果毛都没有，@表哥字典不够强啊。
+此时感觉希望为 0 了，关闭表哥的通话，冷静想了一下。
+柳暗花明又一村 此时想起了我发现的 phpinfo ，不会网站目录就是管理员的用户名，运气真好，果然网站目录就是管理员用户名
+这有一个历史漏洞，打是不成功。可以看到用户名是存在的
+用户名不存在提示
+上天还会给我运气吗？进行一波暴力破解
+woc ，运气真好。弱口令到手
+此时表哥也传来了消息，打历史漏洞打到了一个注入，证明一下。
+经历一波历史漏洞 getshell 操作无果。奈何本人太菜了，黑阔大佬到底怎么 getshell 的呢？ 结束 夜深人静的时候表哥已经 getshell 了，不愧是表哥，真帅。
+因为是通过上传 jpg 然后利用漏洞生成 php 。当时的黑阔应该也是一样的操作，当时没想到查看图片寻找，不然黑阔大佬的webshell密码就到手了。</description></item></channel></rss>
